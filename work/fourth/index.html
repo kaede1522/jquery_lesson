@@ -65,11 +65,11 @@
       
       $(function() {
         function menu() {
-        $(this).children(".menu__list__childList").stop(true, true).slideDown();
+        $(this).children(".menu__list__childList").stop().slideDown();
       }
 
       function hideMenu() {
-        $(this).children(".menu__list__childList").stop(true, true).slideUp();
+        $(this).children(".menu__list__childList").stop().slideUp();
       }
 
       $(".menu__list > li").hover(menu, hideMenu);
