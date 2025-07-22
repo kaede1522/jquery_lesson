@@ -16,6 +16,167 @@
   <script src="../../common/js/jquery.js"></script>
   <script>
     // 回答はここに書いてね
+
+    // モンスターの取得
+// 'https://pokeapi.co/api/v2/pokemon/1'
+
+// モンスターボールの取得
+// 'https://pokeapi.co/api/v2/item/4'
+
+
+    const initialHtml = $('#wrapper').html();
+
+    // 「捕まえる」失敗時の画面表示
+    let failHtml =
+    `
+    <p class="text">逃げられてしまった...</p>
+    <button class="btn mt" data-js="reset">戻る</button>
+    `
+
+    // 「ポケモンを探す」後の画面表示
+    let encountHtml =
+    `
+    <p class="name"></p>
+    <img class="img" src="" alt="">
+    <div>
+      <button class="btn catch" id="catch">捕まえる</button>
+      <button class="btn escape" data-js="reset">逃げる</button>
+    </div>
+    `
+
+    // 「捕まえる」成功時の画面表示
+    let donehtml =
+    `
+    <p class="name">ゲットしました</p>
+    <div>
+      <img class="img" src="" alt="">
+    </div>
+    <button class="btn" data-js="reset">戻る</button>
+    `
+
+  $(function () {
+    const $wrapper = $('#wrapper');
+    const originalHtml = $wrapper.html();
+
+    function bindSearchEvent() {
+      $('#pokemon_search').on('click', () => {
+        const pokeRandom = Math.floor(Math.random() * 151)+1;
+        $.ajax({
+          url: `https://pokeapi.co/api/v2/pokemon/${pokeRandom}/`,
+          method: 'GET',
+        }).done(function (poke) {
+          $wrapper.html(encountHtml);
+          $('.img').attr("src", poke.sprites.front_default).attr("alt", poke.name);
+          $.ajax({
+            url: poke.species.url,
+            method: 'GET',
+          }).done(function (species) {
+            $('.name').text(species.names[0].name);
+          })
+
+          $(".catch").on('click', () => {
+            const catchRandom = Math.floor(Math.random() * 2);
+
+            switch (catchRandom) {
+              case 0:
+                $.ajax({
+                  url: 'https://pokeapi.co/api/v2/item/4',
+                  method: 'GET',
+                }).done(function (ball) {
+                  $wrapper.html(donehtml);
+                  $('.img').attr('src', ball.sprites.default).attr('alt', "");
+                  $('.btn').on('click', () => {
+                    $wrapper.html(originalHtml);
+                    bindSearchEvent();
+                  });
+                });
+                break;
+
+              case 1:
+                $wrapper.html(failHtml);
+                $('.btn').on('click', () => {
+                  $wrapper.html(originalHtml);
+                  bindSearchEvent();
+                });
+                break;
+            }
+
+          });
+
+          $('.escape').on('click', () => {
+            $wrapper.html(originalHtml);
+            bindSearchEvent();
+          })
+        });
+      });
+    }
+
+  bindSearchEvent(); // 初期のイベント登録
+});
+
+
+
+
+    // $(function() {
+
+    //   const originalHtml = $('#wrapper').html();
+
+    //   $('#pokemon_search').on('click', () => {
+    //     $.ajax({
+    //       url: 'https://pokeapi.co/api/v2/pokemon/1/',
+    //       method: 'GET',
+    //     }).done(function(poke) {
+    //       $('#wrapper').html(encountHtml);
+    //       $('.name').text(poke.name);
+    //       $('.img').attr("src", poke.sprites.front_default).attr("alt", poke.name);
+
+    //       $(".catch").on('click', () => {
+    //         const random = Math.floor(Math.random() * 2);
+
+    //         switch (random) {
+    //           case 0:
+    //             $.ajax({
+    //               url: 'https://pokeapi.co/api/v2/item/4',
+    //               method: 'GET',
+    //             }).done(function(ball) {
+    //               console.log(ball);
+    //               $('#wrapper').html(donehtml);
+    //               $('.img').attr('src', ball.sprites.default).attr('alt', "");
+    //               $('[data-js="reset"]').on('click', () => {
+    //                 $('#wrapper').html(originalHtml);
+    //               })
+                  
+    //             }).fail(function(err) {
+    //               console.log(err);
+    //             })
+                
+    //             break;
+              
+    //           case 1:
+    //             $('#wrapper').html(failHtml);
+    //             $('.btn').on('click', () => {
+    //               $('#wrapper').html(originalHtml);
+    //             })
+    //             break;
+    //         }
+    //       })
+    //     }).fail(function(err) {
+
+    //     })
+    //   })
+    // })
+
+
+    
+
+    // $.ajax({
+    //   url: 'https://pokeapi.co/api/v2/pokemon/1/',
+    //   method: 'GET',
+    // }).done(function(res) {
+
+    // }).fail(function(err) {
+
+    // });
   </script>
 </body>
 </html>
